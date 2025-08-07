@@ -6,3 +6,34 @@ datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
+
+enum UserLevel {
+  USER
+  ADMIN
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  password  String
+  level     UserLevel @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relação com o modelo Task: um usuário pode ter várias tarefas
+  tasks Task[]
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  status      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int
+
+  // Relação com o modelo User: uma tarefa pertence a um usuário
+  user User @relation(fields: [userId], references: [id])
+}
